@@ -1,0 +1,22 @@
+#!/bin/sh
+
+SESSION="Development"
+
+# if the session is already running, just attach to it.
+tmux has-session -t $SESSION
+if [ $? -eq 0 ]; then
+    echo "Session $SESSION already exists. Attaching."
+    sleep 1
+    tmux attach -t $SESSION
+    exit 0;
+fi
+
+tmux new-session -d -s $SESSION
+
+tmux source-file ~/.tmux.conf
+tmux new-window -t $SESSION:0 -k -n 'Development session' 'emacs'
+tmux split-window -v 'bash'
+tmux resize-pane -D 20
+tmux select-window -t $SESSION:0
+tmux attach -t $SESSION
+
